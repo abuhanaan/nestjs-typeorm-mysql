@@ -10,6 +10,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from 'src/users/dtos/CreateUser.dto';
+import { CreateUserPostDto } from 'src/users/dtos/CreateUserPost.dto';
+import { CreateUserProfileDto } from 'src/users/dtos/CreateUserProfile.dto';
 import { UsersService } from 'src/users/services/users/users.service';
 
 @Controller('users')
@@ -18,6 +20,11 @@ export class UsersController {
   @Get()
   getUsers() {
     return this.userService.findUsers();
+  }
+
+  @Get('/:id')
+  getUser(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.findUserById(id);
   }
 
   @Post()
@@ -41,5 +48,23 @@ export class UsersController {
   @Delete('/:id')
   deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.userService.deleteUser(id);
+  }
+
+  @Post(':id/profile')
+  createUserProfile(
+    @Body() userProfileData: CreateUserProfileDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const { ...userProfileDetails } = userProfileData;
+
+    return this.userService.createUserProfile(id, userProfileDetails);
+  }
+
+  @Post(':id/post')
+  createUserPost(
+    @Body() userPostData: CreateUserPostDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.userService.createUserPost(id, userPostData);
   }
 }
